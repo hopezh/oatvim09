@@ -1,95 +1,60 @@
 return {
     "folke/which-key.nvim",
 
-    -- opts = function()
-    --     require("which-key").register({
-    --         -- add keymap group for those keybindings not using <leader>
-    --         ["z"] = { name = "+fold" },
-    --
-    --         -- add keymap group and keybindings using <leader>
-    --         ["<leader>z"] = {
-    --             name = "OatKey",
-    --             m = {
-    --                 "<cmd>CellularAutomaton make_it_rain<CR>",
-    --                 "Make it rain...",
-    --             },
-    --             g = {
-    --                 "<cmd>CellularAutomaton game_of_life<CR>",
-    --                 "Game of life...",
-    --             },
-    --         },
-    --     })
-    -- end,
+    enabled = true,
 
-    opts = {
-        plugins = { spelling = true },
+    event = "VeryLazy",
 
-        defaults = {
-            mode = { "n", "v" },
-            ["g"] = { name = "+goto" },
-            ["gz"] = { name = "+surround" },
-            ["]"] = { name = "+next" },
-            ["["] = { name = "+prev" },
-            ["<leader><tab>"] = { name = "+tabs" },
-            ["<leader>b"] = { name = "+buffer" },
-            ["<leader>c"] = { name = "+code" },
-            ["<leader>f"] = { name = "+file/find" },
-            ["<leader>g"] = { name = "+git" },
-            ["<leader>gh"] = { name = "+hunks" },
-            ["<leader>q"] = { name = "+quit/session/quarto" },
-            ["<leader>s"] = { name = "+search" },
-            ["<leader>u"] = { name = "+ui" },
-            ["<leader>w"] = { name = "+windows" },
-            ["<leader>x"] = { name = "+diagnostics/quickfix" },
+    opts = {},
 
-            -- add keymap group for those keybindings not using <leader>
-            ["z"] = { name = "+fold" },
-
-            -- add keymap group and keybindings using <leader>
-            -- keymap group for oatkey
-            ["<leader>z"] = {
-                name = "OatKey",
-                m = {
-                    "<cmd>CellularAutomaton make_it_rain<CR>",
-                    "Make it rain...",
-                },
-                g = {
-                    "<cmd>CellularAutomaton game_of_life<CR>",
-                    "Game of life...",
-                },
-            },
-
-            ["<leader>m"] = {
-                name = "markdown",
-            },
-
-            -- keymap group for otter
-            ["<leader>o"] = {
-                name = "otter",
-                o = {
-                    "o# %%<cr>",
-                    "new code chunk below",
-                },
-                O = {
-                    "O# %%<cr>",
-                    "new code chunk above",
-                },
-                p = {
-                    "o```{python}<cr>```<esc>O",
-                    "python code chunk",
-                },
-            },
-
-            -- keymap group for neo-tree
-            ["<leader>t"] = {
-                name = "Neo-tree",
-            },
+    keys = {
+        {
+            "<leader>?",
+            function()
+                require("which-key").show({ global = false })
+            end,
+            desc = "Buffer Local Keymaps (which-key)",
         },
     },
 
-    config = function(_, opts)
+    config = function()
         local wk = require("which-key")
-        wk.setup(opts)
-        wk.register(opts.defaults)
+
+        wk.add({
+            { "<leader>f", group = "file" }, -- group
+
+            { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File", mode = "n" },
+
+            {
+                "<leader>fb",
+                function()
+                    print("hello")
+                end,
+                desc = "Foobar",
+            },
+
+            { "<leader>fn", desc = "New File" },
+
+            { "<leader>f1", hidden = true }, -- hide this keymap
+
+            { "<leader>w", proxy = "<c-w>", group = "windows" }, -- proxy to window mappings
+
+            {
+                "<leader>b",
+                group = "buffers",
+                expand = function()
+                    return require("which-key.extras").expand.buf()
+                end,
+            },
+
+            {
+                -- Nested mappings are allowed and can be added in any order
+                -- Most attributes can be inherited or overridden on any level
+                -- There's no limit to the depth of nesting
+                mode = { "n", "v" }, -- NORMAL and VISUAL mode
+                { "<leader>q", "<cmd>q<cr>", desc = "Quit" }, -- no need to specify mode since it's inherited
+                { "<leader>w", "<cmd>w<cr>", desc = "Write" },
+            },
+        })
     end,
 }
